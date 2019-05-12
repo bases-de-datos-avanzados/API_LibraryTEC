@@ -48,5 +48,18 @@ namespace API_LibraryTEC.Services
             return 0;
         }
 
+
+        public int Update(string pIssn, Book pBook)
+        {
+            try
+            {
+                _books.ReplaceOne(book => book.Issn == pIssn, pBook);
+            }catch(Exception e)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
     }
 }

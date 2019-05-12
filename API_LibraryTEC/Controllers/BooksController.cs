@@ -53,6 +53,22 @@ namespace API_LibraryTEC.Controllers
         }
 
 
+        [Route("api/books/update/{pIssn:length(14)}")]
+        [HttpPost]
+        public IActionResult Update(string pIssn, Book pBook)
+        {
+            var book = _bookService.Get(pIssn);
+
+            if (book == null)
+                return NotFound();
+
+            if (_bookService.Update(pIssn, pBook) < 0)
+                return StatusCode(StatusCodes.Status409Conflict);
+
+            return NoContent();
+        }
+
+
 
     }
 }
