@@ -27,6 +27,9 @@ namespace API_LibraryTEC.Models
         [BsonElement("copiesSold")]
         public int CopiesSold { get; set; }
 
+        [BsonElement("idLibraries")]
+        public List<string> IDLibraries { get; set; }
+
         [BsonElement("quantity")]
         public int Quantity { get; set; }
 
@@ -35,6 +38,7 @@ namespace API_LibraryTEC.Models
 
         [BsonElement("price")]
         public int Price { get; set; }
+
     }
 
 
