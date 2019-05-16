@@ -133,5 +133,19 @@ namespace API_LibraryTEC.Controllers
         }
 
 
+        /// <summary>
+        /// Filter the books according to the specified range of prices
+        /// </summary>
+        /// <param name="pLow">Range start</param>
+        /// <param name="pHigh">Range end</param>
+        /// <returns></returns>
+        [Route("api/books/price/{pLow}/{pHigh}")]
+        [HttpGet]
+        public ActionResult<List<Book>> PriceRange([FromRoute] int pLow, [FromRoute] int pHigh)
+        {
+            return _bookService.PriceRange(pLow, pHigh);
+        }
+
+
     }
 }

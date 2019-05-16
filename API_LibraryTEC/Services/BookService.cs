@@ -161,5 +161,22 @@ namespace API_LibraryTEC.Services
             return _books.Find<Book>(filter).ToList<Book>();
         }
 
+
+        /// <summary>
+        /// Obtains all the documents inside the collection "Books" that has the 
+        /// value of the field "price" between the two specified values
+        /// </summary>
+        /// <param name="pPrice1">Range start</param>
+        /// <param name="pPrice2">Range end</param>
+        /// <returns></returns>
+        public List<Book> PriceRange(int pPrice1, int pPrice2)
+        {
+            var gte = Builders<Book>.Filter.Gte("price", pPrice1);
+            var lte = Builders<Book>.Filter.Lte("price", pPrice2);
+            var filter = Builders<Book>.Filter.And(gte, lte);
+
+            return _books.Find(filter).ToList();
+        }
+
     }
 }
