@@ -27,6 +27,7 @@ namespace API_LibraryTEC
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<BookService>();
+            services.AddScoped<LibraryService>();
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

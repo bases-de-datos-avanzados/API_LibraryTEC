@@ -22,7 +22,7 @@ namespace API_LibraryTEC.Services
         {
             var client = new MongoClient(config.GetConnectionString("LibraryTECDB"));
             var database = client.GetDatabase("LibraryTECDB");
-            _books = database.GetCollection<Book>("Books");
+            _books = database.GetCollection<Book>(CONSTANTS_BOOK.BOOKS_COLLECTION);
         }
 
 
@@ -43,7 +43,7 @@ namespace API_LibraryTEC.Services
         /// <returns>Book model</returns>
         public Book Get(string pIssn)
         {
-            var filter = Builders<Book>.Filter.Eq("_id", pIssn);
+            var filter = Builders<Book>.Filter.Eq(CONSTANTS_BOOK.ISSN, pIssn);
             return _books.Find<Book>(filter).FirstOrDefault();
             //return _books.Find<Book>(book => book.Issn == pIssn).FirstOrDefault();
         }
@@ -72,7 +72,7 @@ namespace API_LibraryTEC.Services
         /// </summary>
         /// <param name="pIssn">Issn (_id) of the book</param>
         /// <param name="pBook">New book with updated data</param>
-        /// <returns></returns>
+        /// <returns>0 if successful, -1 if there is an error</returns>
         public int Update(string pIssn, Book pBook)
         {
             try
@@ -113,13 +113,13 @@ namespace API_LibraryTEC.Services
                 switch (pFilters[i])
                 {
                     case 1:
-                        fields.Add("idLibraries");
+                        fields.Add(CONSTANTS_BOOK.IDLIBRARIES);
                         break;
                     case 2:
-                        fields.Add("name");
+                        fields.Add(CONSTANTS_BOOK.NAME);
                         break;
                     case 3:
-                        fields.Add("theme");
+                        fields.Add(CONSTANTS_BOOK.THEME);
                         break;
                 }
             }
@@ -147,13 +147,13 @@ namespace API_LibraryTEC.Services
             switch (pFilter)
             {
                 case 1:
-                    field = "idLibraries";
+                    field = CONSTANTS_BOOK.IDLIBRARIES;
                     break;
                 case 2:
-                    field = "name";
+                    field = CONSTANTS_BOOK.NAME;
                     break;
                 case 3:
-                    field = "theme";
+                    field = CONSTANTS_BOOK.THEME;
                     break;
             }
             var filter = Builders<Book>.Filter.Eq(field, pValue);
@@ -171,8 +171,8 @@ namespace API_LibraryTEC.Services
         /// <returns></returns>
         public List<Book> PriceRange(int pPrice1, int pPrice2)
         {
-            var gte = Builders<Book>.Filter.Gte("price", pPrice1);
-            var lte = Builders<Book>.Filter.Lte("price", pPrice2);
+            var gte = Builders<Book>.Filter.Gte(CONSTANTS_BOOK.PRICE, pPrice1);
+            var lte = Builders<Book>.Filter.Lte(CONSTANTS_BOOK.PRICE, pPrice2);
             var filter = Builders<Book>.Filter.And(gte, lte);
 
             return _books.Find(filter).ToList();

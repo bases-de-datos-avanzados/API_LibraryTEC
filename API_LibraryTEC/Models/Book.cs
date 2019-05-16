@@ -42,4 +42,19 @@ namespace API_LibraryTEC.Models
     }
 
 
+    static class CONSTANTS_BOOK {
+
+        public const string BOOKS_COLLECTION = "Books";
+        public const string ISSN = "_id";
+        public const string NAME = "name";
+        public const string THEME = "theme";
+        public const string DESCRIPTION = "description";
+        public const string COPIES_SOLD = "copiesSold";
+        public const string IDLIBRARIES = "idLibraries";
+        public const string PHOTO = "photo";
+        public const string PRICE = "price";
+    }
+
+
+
 }
