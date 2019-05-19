@@ -27,6 +27,8 @@ namespace API_LibraryTEC.Models
         [BsonElement("schedule")]
         public string Schedule { get; set; }
 
+        
+
     }
 
 
