@@ -30,6 +30,7 @@ namespace API_LibraryTEC
             services.AddScoped<LibraryService>();
             services.AddScoped<PromoService>();
             services.AddScoped<UserService>();
+            services.AddScoped<RequestService>();
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
