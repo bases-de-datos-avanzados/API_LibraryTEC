@@ -8,55 +8,9 @@ using System.Threading.Tasks;
 
 namespace API_LibraryTEC.Models
 {
-    public class Book
+
+    static class CONSTANTS_BOOK
     {
-        //[BsonId]
-        //[BsonRepresentation(BsonType.ObjectId)]
-        [BsonId(IdGenerator = typeof(StringObjectIdGenerator))]
-        public string Issn { get; set; }
-
-        [BsonElement("name")]
-        public string BookName { get; set; }
-
-        [BsonElement("theme")]
-        public string Theme { get; set; }
-
-        [BsonElement("description")]
-        public string Description { get; set; }
-
-        //[BsonElement("copiesSold")]
-        //public int CopiesSold { get; set; }
-
-        [BsonElement("libraries")]
-        public List<SubLibrary> Libraries { get; set; }
-
-        //[BsonElement("quantity")]
-        //public int Quantity { get; set; }
-
-        [BsonElement("photo")]
-        public string Photo { get; set; }
-
-        [BsonElement("price")]
-        public int Price { get; set; }
-
-    }
-
-
-    public class SubLibrary
-    {
-        [BsonElement("idLibrary")]
-        public string IdLibrary { get; set; }
-
-        [BsonElement("quantity")]
-        public int Quantity { get; set; }
-
-        [BsonElement("copiesSold")]
-        public int CopiesSold { get; set; } = 0;
-    }
-
-
-    static class CONSTANTS_BOOK {
-
         public const string BOOKS_COLLECTION = "Books";
         public const string ISSN = "_id";
         public const string NAME = "name";
@@ -70,6 +24,42 @@ namespace API_LibraryTEC.Models
         public const string PRICE = "price";
     }
 
+    public class Book
+    {
+        [BsonId(IdGenerator = typeof(StringObjectIdGenerator))]
+        public string Issn { get; set; }
 
+        [BsonElement(CONSTANTS_BOOK.NAME)]
+        public string BookName { get; set; }
+
+        [BsonElement(CONSTANTS_BOOK.THEME)]
+        public string Theme { get; set; }
+
+        [BsonElement(CONSTANTS_BOOK.DESCRIPTION)]
+        public string Description { get; set; }
+
+        [BsonElement(CONSTANTS_BOOK.LIBRARIES)]
+        public List<SubLibrary> Libraries { get; set; }
+
+        [BsonElement(CONSTANTS_BOOK.PHOTO)]
+        public string Photo { get; set; }
+
+        [BsonElement(CONSTANTS_BOOK.PRICE)]
+        public int Price { get; set; }
+
+    }
+
+
+    public class SubLibrary
+    {
+        [BsonElement(CONSTANTS_BOOK.SUB_LIBRARY_ID)]
+        public string IdLibrary { get; set; }
+
+        [BsonElement(CONSTANTS_BOOK.SUB_QUANTITY)]
+        public int Quantity { get; set; }
+
+        [BsonElement(CONSTANTS_BOOK.SUB_COPIES_SOLD)]
+        public int CopiesSold { get; set; } = 0;
+    }
 
 }
