@@ -113,6 +113,59 @@ namespace API_LibraryTEC.Controllers
         }
 
 
+        /// <summary>
+        /// Obtains all the requests created between the two given dates
+        /// </summary>
+        /// <param name="pDate1">First date</param>
+        /// <param name="pDate2">Second date</param>
+        /// <returns>Lists of all the matching requests</returns>
+        [Route(REQUEST_URL + "/date/{pDate1}/{pDate2}")]
+        [HttpGet]
+        public ActionResult<List<Request>> SearchRequestDate([FromRoute] DateTime pDate1, [FromRoute] DateTime pDate2)
+        {
+            return _requestService.SearchDateRange(pDate1, pDate2);
+        }
+
+
+        /// <summary>
+        /// Obtains all the requests that match the specified state
+        /// </summary>
+        /// <param name="pState">Integer that represent the state</param>
+        /// <returns>List of requests</returns>
+        [Route(REQUEST_URL + "/state/{pState}")]
+        [HttpGet]
+        public ActionResult<List<Request>> SearchRequestState(int pState)
+        {
+            return _requestService.SearchState(pState);
+        }
+
+
+        /// <summary>
+        /// Obtains all the requests of books of the specified theme
+        /// </summary>
+        /// <param name="pTheme">Theme of the book</param>
+        /// <returns></returns>
+        [Route(REQUEST_URL + "/bookTheme/{pTheme}")]
+        [HttpGet]
+        public ActionResult<List<Request>> SearchBookTheme(string pTheme)
+        {
+            return _requestService.SearchBookTheme(pTheme);
+        }
+
+
+        /// <summary>
+        /// Obtains all the requests made by the specified client
+        /// </summary>
+        /// <param name="pClient">ID of the client</param>
+        /// <returns></returns>
+        [Route(REQUEST_URL + "/client/{pClient}")]
+        [HttpGet]
+        public ActionResult<List<Request>> SearchClient(string pClient)
+        {
+            return _requestService.SearchClient(pClient);
+        }
+
+
 
     }
 }

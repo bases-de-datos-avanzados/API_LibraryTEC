@@ -18,6 +18,14 @@ namespace API_LibraryTEC.Models
         public const string TOTAL = "total";
         public const string DELIVERY_DATE = "deliveryDate";
         public const string DELIVERY_PLACE = "deliveryPlace";
+
+        public static readonly Dictionary<int, string> STATES = new Dictionary<int, string>
+        {
+            { 1, "Solicitado"},
+            { 2, "Procesado"},
+            { 3, "Enviado"},
+            { 4, "Rechazado"}
+        };
     }
 
 
