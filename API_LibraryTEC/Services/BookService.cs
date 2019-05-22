@@ -106,40 +106,20 @@ namespace API_LibraryTEC.Services
         {
             if (pFilters.Count == 1)
                 return this.Filter(pFilters[0], pValues[0]);
-
-            List<string> fields = new List<string>();
-            for (int i=0; i<pFilters.Count; ++i)
-            {
-                switch (pFilters[i])
-                {
-                    case 1:
-                        fields.Add(CONSTANTS_BOOK.LIBRARIES + "." + CONSTANTS_BOOK.SUB_LIBRARY_ID);
-                        break;
-                    case 2:
-                        fields.Add(CONSTANTS_BOOK.NAME);
-                        break;
-                    case 3:
-                        fields.Add(CONSTANTS_BOOK.THEME);
-                        break;
-                    case 4:
-                        fields.Add(CONSTANTS_BOOK.PRICE);
-                        break;
-                }
-            }
             
-            if(fields[0] != CONSTANTS_BOOK.PRICE)
+            if(CONSTANTS_BOOK.FILTERS[pFilters[0]] != CONSTANTS_BOOK.PRICE)
             {
-                var query = Builders<Book>.Filter.Eq(fields[0], pValues[0]);
-                for (int i = 1; i < fields.Count; ++i)
+                var query = Builders<Book>.Filter.Eq(CONSTANTS_BOOK.FILTERS[pFilters[0]], pValues[0]);
+                for (int i = 1; i < pFilters.Count; ++i)
                 {
-                    if(fields[i] == CONSTANTS_BOOK.PRICE)
+                    if(CONSTANTS_BOOK.FILTERS[pFilters[i]] == CONSTANTS_BOOK.PRICE)
                     {
                         var gte = Builders<Book>.Filter.Gte(CONSTANTS_BOOK.PRICE, Convert.ToInt32(pValues[i].Split("-")[0]));
                         var lte = Builders<Book>.Filter.Lte(CONSTANTS_BOOK.PRICE, Convert.ToInt32(pValues[i].Split("-")[1]));
                         query = query & (Builders<Book>.Filter.And(gte, lte));
                     }
                     else
-                        query = query & (Builders<Book>.Filter.Eq(fields[i], pValues[i]));
+                        query = query & (Builders<Book>.Filter.Eq(CONSTANTS_BOOK.FILTERS[pFilters[i]], pValues[i]));
                 }
 
                 return _books.Find(query).ToList();
@@ -150,9 +130,9 @@ namespace API_LibraryTEC.Services
                 var gte = Builders<Book>.Filter.Gte(CONSTANTS_BOOK.PRICE, Convert.ToInt32(pValues[0].Split("-")[0]));
                 var lte = Builders<Book>.Filter.Lte(CONSTANTS_BOOK.PRICE, Convert.ToInt32(pValues[0].Split("-")[1]));
                 var query = Builders<Book>.Filter.And(gte, lte);
-                for (int i = 1; i < fields.Count; ++i)
+                for (int i = 1; i < pFilters.Count; ++i)
                 {
-                    query = query & (Builders<Book>.Filter.Eq(fields[i], pValues[i]));
+                    query = query & (Builders<Book>.Filter.Eq(CONSTANTS_BOOK.FILTERS[pFilters[i]], pValues[i]));
                 }
                 return _books.Find(query).ToList();
             }
@@ -169,23 +149,7 @@ namespace API_LibraryTEC.Services
         /// <returns></returns>
         public List<Book> Filter(int pFilter, string pValue)
         {
-            string field = "";
-            switch (pFilter)
-            {
-                case 1:
-                    field = CONSTANTS_BOOK.LIBRARIES+"."+CONSTANTS_BOOK.SUB_LIBRARY_ID;
-                    break;
-                case 2:
-                    field = CONSTANTS_BOOK.NAME;
-                    break;
-                case 3:
-                    field = CONSTANTS_BOOK.THEME;
-                    break;
-                case 4:
-                    field = CONSTANTS_BOOK.PRICE;
-                    break;
-            }
-            if(field == CONSTANTS_BOOK.PRICE)
+            if(CONSTANTS_BOOK.FILTERS[pFilter] == CONSTANTS_BOOK.PRICE)
             {
                 var gte = Builders<Book>.Filter.Gte(CONSTANTS_BOOK.PRICE, Convert.ToInt32(pValue.Split("-")[0]));
                 var lte = Builders<Book>.Filter.Lte(CONSTANTS_BOOK.PRICE, Convert.ToInt32(pValue.Split("-")[1]));
@@ -194,7 +158,7 @@ namespace API_LibraryTEC.Services
             }
             else
             {
-                var filter = Builders<Book>.Filter.Eq(field, pValue);
+                var filter = Builders<Book>.Filter.Eq(CONSTANTS_BOOK.FILTERS[pFilter], pValue);
 
                 return _books.Find<Book>(filter).ToList<Book>();
             }            

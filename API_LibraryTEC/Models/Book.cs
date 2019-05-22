@@ -22,6 +22,14 @@ namespace API_LibraryTEC.Models
         public const string LIBRARIES = "libraries";
         public const string PHOTO = "photo";
         public const string PRICE = "price";
+
+        public readonly static Dictionary<int, string> FILTERS = new Dictionary<int, string>()
+        {
+            { 1, CONSTANTS_BOOK.LIBRARIES+"."+CONSTANTS_BOOK.SUB_LIBRARY_ID},
+            { 2, CONSTANTS_BOOK.NAME},
+            { 3, CONSTANTS_BOOK.THEME},
+            { 4, CONSTANTS_BOOK.PRICE}
+        };
     }
 
     public class Book
