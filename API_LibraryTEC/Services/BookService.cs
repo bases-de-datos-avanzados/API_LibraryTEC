@@ -181,5 +181,16 @@ namespace API_LibraryTEC.Services
             return _books.Find(filter).ToList();
         }
 
+        
+        public void DecreaseBookQuantity(string pBook, string pLibrary)
+        {
+            var matchIssn = Builders<Book>.Filter.Eq(CONSTANTS_BOOK.ISSN, pBook);
+            var matchLibrary = Builders<Book>.Filter.Eq(CONSTANTS_BOOK.LIBRARIES+"."+CONSTANTS_BOOK.SUB_LIBRARY_ID, pLibrary);
+            var search = Builders<Book>.Filter.And(matchIssn, matchLibrary);
+            var update = new BsonDocument { { "$inc",
+                    new BsonDocument { { CONSTANTS_BOOK.LIBRARIES + "." + CONSTANTS_BOOK.SUB_QUANTITY, -1 } } } };
+            _books.FindOneAndUpdate(search, update);
+        }
+
     }
 }

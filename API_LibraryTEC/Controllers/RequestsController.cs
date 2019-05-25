@@ -166,6 +166,19 @@ namespace API_LibraryTEC.Controllers
         }
 
 
+        /// <summary>
+        /// Return all the requests made in the specified library
+        /// </summary>
+        /// <param name="pLibrary">ID of the library</param>
+        /// <returns></returns>
+        [Route(REQUEST_URL + "/library/{pLibrary}")]
+        [HttpGet]
+        public ActionResult<List<Request>> SearchLibrary(string pLibrary)
+        {
+            return _requestService.SearchLibrary(pLibrary);
+        }
+
+
 
     }
 }

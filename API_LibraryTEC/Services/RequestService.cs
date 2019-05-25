@@ -13,6 +13,7 @@ namespace API_LibraryTEC.Services
     {
         // Holds the collection "Requests" of the database
         private readonly IMongoCollection<Request> _requests;
+        private readonly IMongoCollection<Book> _books;
 
         /// <summary>
         /// Class constructor
@@ -23,6 +24,7 @@ namespace API_LibraryTEC.Services
             var client = new MongoClient(config.GetConnectionString("LibraryTECDB"));
             var database = client.GetDatabase("LibraryTECDB");
             _requests = database.GetCollection<Request>(CONSTANTS_REQUEST.REQUESTS_COLLECTION);
+            _books = database.GetCollection<Book>(CONSTANTS_BOOK.BOOKS_COLLECTION);
         }
 
 
@@ -58,6 +60,7 @@ namespace API_LibraryTEC.Services
             try
             {
                 _requests.InsertOne(pRequest);
+                this.UpdateBooksQuantity(pRequest.RequestBooks);
             }
             catch (Exception e)
             {
@@ -65,6 +68,25 @@ namespace API_LibraryTEC.Services
             }
 
             return 0;
+        }
+
+
+        /// <summary>
+        /// Update the quantity of available book in each library
+        /// </summary>
+        /// <param name="pRequestBooks">List of objects with the IDs of book and libraries</param>
+        private void UpdateBooksQuantity(List<SubRequestBooks> pRequestBooks)
+        {
+            for (int i=0; i<pRequestBooks.Count; ++i)
+            {
+                var matchIssn = Builders<Book>.Filter.Eq(CONSTANTS_BOOK.ISSN, pRequestBooks[i].IdBook);
+                var matchLibrary = Builders<Book>.Filter.Eq(CONSTANTS_BOOK.LIBRARIES + "." + CONSTANTS_BOOK.SUB_LIBRARY_ID, 
+                    pRequestBooks[i].IdLibrary);
+                var search = Builders<Book>.Filter.And(matchIssn, matchLibrary);
+                var update = new BsonDocument("$inc",
+                    new BsonDocument(CONSTANTS_BOOK.LIBRARIES + ".$." + CONSTANTS_BOOK.SUB_QUANTITY, -1));
+                _books.UpdateOne(search, update);
+            }
         }
 
 
@@ -140,7 +162,7 @@ namespace API_LibraryTEC.Services
         {
             var unwind = new BsonDocument("$unwind", "$requestBooks");
             var lookup = new BsonDocument { { "$lookup", new BsonDocument { { "from", CONSTANTS_BOOK.BOOKS_COLLECTION },
-                { "localField", CONSTANTS_REQUEST.REQUEST_BOOKS },
+                { "localField", CONSTANTS_REQUEST.REQUEST_BOOKS+"."+CONSTANTS_REQUEST.SUB_ID_BOOK },
                 { "foreignField", CONSTANTS_BOOK.ISSN },
                 { "as", "book_docs" } } } };
             var match = new BsonDocument("$match", new BsonDocument("book_docs.theme", pTheme));
@@ -172,6 +194,19 @@ namespace API_LibraryTEC.Services
         public List<Request> SearchClient(string pClient)
         {
             var query = Builders<Request>.Filter.Eq(CONSTANTS_REQUEST.ID_CLIENT, pClient);
+            return _requests.Find(query).ToList();
+        }
+
+
+        /// <summary>
+        /// Obtains all the documents in the collection "Requests" that have the specified library id
+        /// inside the field "libraries"
+        /// </summary>
+        /// <param name="pLibrary">ID of the library</param>
+        /// <returns></returns>
+        public List<Request> SearchLibrary(string pLibrary)
+        {
+            var query = Builders<Request>.Filter.Eq(CONSTANTS_REQUEST.REQUEST_BOOKS+"."+CONSTANTS_REQUEST.SUB_ID_LIBRARY, pLibrary);
             return _requests.Find(query).ToList();
         }
 

@@ -14,6 +14,8 @@ namespace API_LibraryTEC.Models
         public const string ID_CLIENT = "idClient";
         public const string REQUEST_DATE = "requestDate";
         public const string REQUEST_BOOKS = "requestBooks";
+        public const string SUB_ID_BOOK = "idBook";
+        public const string SUB_ID_LIBRARY = "idLibrary";
         public const string STATE = "state";
         public const string TOTAL = "total";
         public const string DELIVERY_DATE = "deliveryDate";
@@ -41,7 +43,7 @@ namespace API_LibraryTEC.Models
         public DateTime RequestDate { get; set; }
 
         [BsonElement(CONSTANTS_REQUEST.REQUEST_BOOKS)]
-        public List<string> RequestBooks { get; set; }
+        public List<SubRequestBooks> RequestBooks { get; set; }
 
         [BsonElement(CONSTANTS_REQUEST.STATE)]
         public string State { get; set; }
@@ -54,5 +56,15 @@ namespace API_LibraryTEC.Models
 
         [BsonElement(CONSTANTS_REQUEST.DELIVERY_PLACE)]
         public string DeliveryPlace { get; set; } = "";
+    }
+
+
+    public class SubRequestBooks
+    {
+        [BsonElement("idBook")]
+        public string IdBook { get; set; }
+
+        [BsonElement("idLibrary")]
+        public string IdLibrary { get; set; }
     }
 }
