@@ -98,6 +98,19 @@ namespace API_LibraryTEC.Services
 
 
 
+        /// <summary>
+        /// Return the data of a document with matching username
+        /// </summary>
+        /// <param name="pUserName"></param>
+        /// <returns></returns>
+        public User Login(string pUserName)
+        {
+            var match = Builders<User>.Filter.Eq(CONSTANTS_USER.USER_NAME, pUserName);
+            return _users.Find<User>(match).FirstOrDefault();
+        }
+
+
+
 
     }
 }

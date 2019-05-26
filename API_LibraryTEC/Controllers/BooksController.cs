@@ -42,7 +42,7 @@ namespace API_LibraryTEC.Controllers
         /// </summary>
         /// <param name="pIssn">Issn of the book</param>
         /// <returns></returns>
-        [Route("api/books/get/{pIssn:length(14)}")]
+        [Route("api/books/get/{pIssn}")]
         [HttpGet]
         public ActionResult<Book> Get(string pIssn)
         {
@@ -82,7 +82,7 @@ namespace API_LibraryTEC.Controllers
         /// <returns>Http status code: 200 if successfull,
         /// 409 if there is an error during the updating process, 
         /// 404 if the book is not found the database</returns>
-        [Route("api/books/update/{pIssn:length(14)}")]
+        [Route("api/books/update/{pIssn}")]
         [HttpPost]
         public IActionResult Update(string pIssn, Book pBook)
         {
@@ -103,7 +103,7 @@ namespace API_LibraryTEC.Controllers
         /// </summary>
         /// <param name="pIssn">Issn(_id) of the book</param>
         /// <returns></returns>
-        [Route("api/books/delete/{pIssn:length(14)}")]
+        [Route("api/books/delete/{pIssn}")]
         [HttpGet]
         public IActionResult Delete(string pIssn)
         {

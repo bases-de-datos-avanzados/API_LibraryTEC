@@ -137,6 +137,32 @@ namespace API_LibraryTEC.Services
         }
 
 
+        /// <summary> NEEDS FIX!!!!!!****************
+        /// 
+        /// Retrieves all documents with the value of the field "requestDate" between the two
+        /// specified dates, of one client
+        /// </summary>
+        /// <param name="pDate1">First date</param>
+        /// <param name="pDate2">Second date</param>
+        /// <param name="pClient">Client id</param>
+        /// <returns>List with all the matching documents</returns>
+        public List<Request> SearchDateRangeClient(string pClient, DateTime pDate1, DateTime pDate2)
+        {
+            var match = new BsonDocument("$match", new BsonDocument("idClient", pClient));
+
+            //var match = new BsonDocument("$match", new BsonDocument(CONSTANTS_REQUEST.ID_CLIENT, pClient));
+            var gte = Builders<Request>.Filter.Gte(CONSTANTS_REQUEST.REQUEST_DATE, pDate1);
+            var lte = Builders<Request>.Filter.Lte(CONSTANTS_REQUEST.REQUEST_DATE, pDate2);
+            //var filterDate = Builders<Request>.Filter.And(gte, lte);
+            var filterDate = new BsonDocument { { "$and", new BsonDocument { { "$gte", pDate1 },
+                { "$lte", pDate2 } } } };
+            var pipeline = new[] { match, filterDate };
+            //var filter = Builders<Request>.Filter.And(match, filterDate);
+
+            return _requests.Aggregate<Request>(pipeline).ToList();
+        }
+
+
         /// <summary>
         /// Search all the documents in the collection "Requests" that has the specified state
         /// The state is specified with an integer that represent it
@@ -146,6 +172,22 @@ namespace API_LibraryTEC.Services
         public List<Request> SearchState(int pState)
         {
             var filter = Builders<Request>.Filter.Eq(CONSTANTS_REQUEST.STATE, CONSTANTS_REQUEST.STATES[pState]);
+            return _requests.Find(filter).ToList();
+        }
+
+
+        /// <summary>
+        /// For one client*****
+        /// Search all the documents in the collection "Requests" that has the specified state
+        /// The state is specified with an integer that represent it
+        /// </summary>
+        /// <param name="pState">Integer that represent the state</param>
+        /// <returns></returns>
+        public List<Request> SearchStateClient(string pClient, int pState)
+        {
+            var clientMatch = Builders<Request>.Filter.Eq(CONSTANTS_REQUEST.ID_CLIENT, pClient);
+            var stateMatch = Builders<Request>.Filter.Eq(CONSTANTS_REQUEST.STATE, CONSTANTS_REQUEST.STATES[pState]);
+            var filter = Builders<Request>.Filter.And(clientMatch, stateMatch);
             return _requests.Find(filter).ToList();
         }
 
@@ -175,6 +217,44 @@ namespace API_LibraryTEC.Services
             if(ids.Count != 0)
             {
                 for(int i=0; i<ids.Count; ++i)
+                {
+                    Request req = this.Get(ids[i].GetValue(CONSTANTS_REQUEST.ID).AsString);
+                    requests.Add(req);
+                }
+            }
+
+            return requests;
+        }
+
+
+
+        /// <summary>
+        /// For one client*****
+        /// Return all the documents of the collection "Requests" that have in the field "requestBooks" the 
+        /// id of a book of the specified theme.
+        /// First obtains all the IDs of the documents in "Requests", and then query the the data of those 
+        /// documents
+        /// </summary>
+        /// <param name="pTheme">Theme of the book</param>
+        /// <returns></returns>
+        public List<Request> SearchBookThemeClient(string pClient, string pTheme)
+        {
+            var unwind = new BsonDocument("$unwind", "$requestBooks");
+            var lookup = new BsonDocument { { "$lookup", new BsonDocument { { "from", CONSTANTS_BOOK.BOOKS_COLLECTION },
+                { "localField", CONSTANTS_REQUEST.REQUEST_BOOKS+"."+CONSTANTS_REQUEST.SUB_ID_BOOK },
+                { "foreignField", CONSTANTS_BOOK.ISSN },
+                { "as", "book_docs" } } } };
+            var match = new BsonDocument { { "$match",
+                    new BsonDocument { { CONSTANTS_REQUEST.ID_CLIENT, pClient }, { "book_docs.theme", pTheme } } } };
+            var project = new BsonDocument { { "$project", new BsonDocument { { "_id", 1 } } } };
+            var group = new BsonDocument("$group", new BsonDocument(CONSTANTS_REQUEST.ID, "$_id"));
+            var pipeline = new[] { unwind, lookup, match, project, group };
+
+            List<BsonDocument> ids = _requests.Aggregate<BsonDocument>(pipeline).ToList();
+            List<Request> requests = new List<Request>();
+            if (ids.Count != 0)
+            {
+                for (int i = 0; i < ids.Count; ++i)
                 {
                     Request req = this.Get(ids[i].GetValue(CONSTANTS_REQUEST.ID).AsString);
                     requests.Add(req);

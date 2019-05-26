@@ -6,6 +6,7 @@ using API_LibraryTEC.Models;
 using API_LibraryTEC.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace API_LibraryTEC.Controllers
 {
@@ -114,16 +115,63 @@ namespace API_LibraryTEC.Controllers
 
 
         /// <summary>
-        /// Obtains all the requests created between the two given dates
+        /// Obtains the number of requests created between the two given dates
         /// </summary>
         /// <param name="pDate1">First date</param>
         /// <param name="pDate2">Second date</param>
         /// <returns>Lists of all the matching requests</returns>
         [Route(REQUEST_URL + "/date/{pDate1}/{pDate2}")]
         [HttpGet]
-        public ActionResult<List<Request>> SearchRequestDate([FromRoute] DateTime pDate1, [FromRoute] DateTime pDate2)
+        public ActionResult<JObject> SearchRequestDate([FromRoute] DateTime pDate1, [FromRoute] DateTime pDate2)
+        {
+            dynamic respond = new JObject();
+            respond.quantity = _requestService.SearchDateRange(pDate1, pDate2).Count;
+            return respond;
+        }
+
+
+        /// <summary>
+        /// Obtains all the requests created between the two given dates
+        /// </summary>
+        /// <param name="pDate1">First date</param>
+        /// <param name="pDate2">Second date</param>
+        /// <returns>Lists of all the matching requests</returns>
+        [Route(REQUEST_URL + "/dateReq/{pDate1}/{pDate2}")]
+        [HttpGet]
+        public ActionResult<List<Request>> RequestsDate([FromRoute] DateTime pDate1, [FromRoute] DateTime pDate2)
         {
             return _requestService.SearchDateRange(pDate1, pDate2);
+        }
+
+
+        /// <summary>
+        /// Return all the request of a client filtered by a range of dates
+        /// </summary>
+        /// <param name="pClient"></param>
+        /// <param name="pDate1"></param>
+        /// <param name="pDate2"></param>
+        /// <returns></returns>
+        [Route(REQUEST_URL + "/dateClient/{pClient}/{pDate1}/{pDate2}")]
+        [HttpGet]
+        public ActionResult<List<Request>> SearchRequestDateClient([FromRoute] string pClient, 
+            [FromRoute] DateTime pDate1, [FromRoute] DateTime pDate2)
+        {
+            return _requestService.SearchDateRangeClient(pClient, pDate1, pDate2);
+        }
+
+
+        /// <summary>
+        /// Obtains the number of requests that match the specified state
+        /// </summary>
+        /// <param name="pState">Integer that represent the state</param>
+        /// <returns>List of requests</returns>
+        [Route(REQUEST_URL + "/state/{pState}")]
+        [HttpGet]
+        public ActionResult<JObject> SearchRequestState(int pState)
+        {
+            dynamic respond = new JObject();
+            respond.quantity = _requestService.SearchState(pState).Count;
+            return respond;
         }
 
 
@@ -132,11 +180,40 @@ namespace API_LibraryTEC.Controllers
         /// </summary>
         /// <param name="pState">Integer that represent the state</param>
         /// <returns>List of requests</returns>
-        [Route(REQUEST_URL + "/state/{pState}")]
+        [Route(REQUEST_URL + "/stateReq/{pState}")]
         [HttpGet]
-        public ActionResult<List<Request>> SearchRequestState(int pState)
+        public ActionResult<List<Request>> RequestState(int pState)
         {
             return _requestService.SearchState(pState);
+        }
+
+
+        /// <summary>
+        /// Obtains all the requests that match the specified state and client id
+        /// </summary>
+        /// <param name="pState">Integer that represent the state</param>
+        /// <returns>List of requests</returns>
+        [Route(REQUEST_URL + "/stateClient/{pClient}/{pState}")]
+        [HttpGet]
+        public ActionResult<List<Request>> SearchRequestStateClient([FromRoute] string pClient, [FromRoute] int pState)
+        {
+            return _requestService.SearchStateClient(pClient, pState);
+ 
+        }
+
+
+        /// <summary>
+        /// Obtains the number of requests of books of the specified theme
+        /// </summary>
+        /// <param name="pTheme">Theme of the book</param>
+        /// <returns></returns>
+        [Route(REQUEST_URL + "/bookTheme/{pTheme}")]
+        [HttpGet]
+        public ActionResult<JObject> SearchBookTheme(string pTheme)
+        {
+            dynamic respond = new JObject();
+            respond.quantity = _requestService.SearchBookTheme(pTheme).Count;
+            return respond;
         }
 
 
@@ -145,11 +222,40 @@ namespace API_LibraryTEC.Controllers
         /// </summary>
         /// <param name="pTheme">Theme of the book</param>
         /// <returns></returns>
-        [Route(REQUEST_URL + "/bookTheme/{pTheme}")]
+        [Route(REQUEST_URL + "/bookThemeReq/{pTheme}")]
         [HttpGet]
-        public ActionResult<List<Request>> SearchBookTheme(string pTheme)
+        public ActionResult<List<Request>> RequestsBookTheme(string pTheme)
         {
             return _requestService.SearchBookTheme(pTheme);
+        }
+
+
+        /// <summary>
+        /// For one client
+        /// Obtains all the requests of books of the specified theme
+        /// </summary>
+        /// <param name="pTheme">Theme of the book</param>
+        /// <returns></returns>
+        [Route(REQUEST_URL + "/bookThemeClient/{pClient}/{pTheme}")]
+        [HttpGet]
+        public ActionResult<List<Request>> SearchBookThemeClient([FromRoute] string pClient, [FromRoute] string pTheme)
+        {
+            return _requestService.SearchBookThemeClient(pClient, pTheme);
+        }
+
+
+        /// <summary>
+        /// Obtains the number of requests made by the specified client
+        /// </summary>
+        /// <param name="pClient">ID of the client</param>
+        /// <returns></returns>
+        [Route(REQUEST_URL + "/client/{pClient}")]
+        [HttpGet]
+        public ActionResult<JObject> SearchClient(string pClient)
+        {
+            dynamic respond = new JObject();
+            respond.quantity = _requestService.SearchClient(pClient).Count;
+            return respond;
         }
 
 
@@ -158,9 +264,9 @@ namespace API_LibraryTEC.Controllers
         /// </summary>
         /// <param name="pClient">ID of the client</param>
         /// <returns></returns>
-        [Route(REQUEST_URL + "/client/{pClient}")]
+        [Route(REQUEST_URL + "/clientReq/{pClient}")]
         [HttpGet]
-        public ActionResult<List<Request>> SearchClient(string pClient)
+        public ActionResult<List<Request>> RequestsClient(string pClient)
         {
             return _requestService.SearchClient(pClient);
         }

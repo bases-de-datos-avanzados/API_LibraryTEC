@@ -115,6 +115,24 @@ namespace API_LibraryTEC.Controllers
 
 
 
+        /// <summary>
+        /// Return the data of a user searching it by its user name
+        /// </summary>
+        /// <param name="pUserName">Username</param>
+        /// <returns></returns>
+        [Route(USER_URL + "/login/{pUserName}")]
+        [HttpGet]
+        public ActionResult<User> Login(string pUserName)
+        {
+            var user = _userService.Login(pUserName);
+            if (user == null)
+                return NotFound();
+
+            return user;
+        }
+
+
+
 
     }
 }
