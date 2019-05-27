@@ -97,6 +97,21 @@ namespace API_LibraryTEC.Services
         }
 
 
+        /// <summary>
+        /// Return a list current available promos
+        /// </summary>
+        /// <returns></returns>
+        public List<Promo> CurrentPromos()
+        {
+            var start = Builders<Promo>.Filter.Lte(CONSTANTS_PROMO.START_DATE, DateTime.Now);
+            var end = Builders<Promo>.Filter.Gte(CONSTANTS_PROMO.END_DATE, DateTime.Now);
+            var filter = Builders<Promo>.Filter.And(start, end);
+
+            return _promos.Find(filter).ToList();
+        }
+
+
+
 
     }
 }

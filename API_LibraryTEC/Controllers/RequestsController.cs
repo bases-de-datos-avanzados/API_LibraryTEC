@@ -285,6 +285,22 @@ namespace API_LibraryTEC.Controllers
         }
 
 
+        /// <summary>
+        /// Return the request with oldest request date
+        /// </summary>
+        /// <returns></returns>
+        [Route(REQUEST_URL + "/takeRequest")]
+        [HttpGet]
+        public ActionResult<Request> TakeRequest()
+        {
+            Request req = _requestService.TakeRequest();
+            if (req == null)
+                return NotFound();
+
+            return req;
+        }
+
+
 
     }
 }

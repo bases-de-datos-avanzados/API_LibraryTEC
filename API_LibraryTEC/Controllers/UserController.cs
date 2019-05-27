@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using API_LibraryTEC.Models;
@@ -122,7 +123,7 @@ namespace API_LibraryTEC.Controllers
         /// <returns></returns>
         [Route(USER_URL + "/login/{pUserName}")]
         [HttpGet]
-        public ActionResult<User> Login(string pUserName)
+        public ActionResult<ExpandoObject> Login(string pUserName)
         {
             var user = _userService.Login(pUserName);
             if (user == null)

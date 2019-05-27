@@ -114,6 +114,18 @@ namespace API_LibraryTEC.Controllers
         }
 
 
+        /// <summary>
+        /// Return a list current available promos
+        /// </summary>
+        /// <returns></returns>
+        [Route(PROMO_URL + "/current")]
+        [HttpGet]
+        public ActionResult<List<Promo>> CurrentPromos()
+        {
+            return _promoService.CurrentPromos();
+        }
+
+
 
     }
 }

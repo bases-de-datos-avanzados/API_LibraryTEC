@@ -1,8 +1,11 @@
 ﻿using API_LibraryTEC.Models;
 using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -101,12 +104,58 @@ namespace API_LibraryTEC.Services
         /// <summary>
         /// Return the data of a document with matching username
         /// </summary>
+        /// <param name="pUserName">User name</param>
+        /// <returns></returns>
+        private ExpandoObject GetByUserName(string pUserName)
+        {
+            var match = new BsonDocument("$match", new BsonDocument(CONSTANTS_USER.USER_NAME, pUserName));
+            var project = new BsonDocument { { "$project", new BsonDocument { { "_id", 1}, { "name", 1}, { "userType", 1},
+                { "userName", 1}, {"pass", 1} } } };
+            var pipeline = new[] { match, project };
+            return _users.Aggregate<ExpandoObject>(pipeline).FirstOrDefault();
+        }
+
+
+        /// <summary>
+        /// Return the data of a manager and the library id
+        /// </summary>
+        /// <param name="pUserName">User name</param>
+        /// <returns></returns>
+        private ExpandoObject GetManager(string pUserName)
+        {
+            var match = new BsonDocument("$match", new BsonDocument(CONSTANTS_USER.USER_NAME, pUserName));
+            var lookup = new BsonDocument { { "$lookup", new BsonDocument { { "from", "Libraries"},
+                { "localField", "_id"}, { "foreignField", "idManager"}, { "as", "lib_doc"} } } };
+            var unwind = new BsonDocument("$unwind", "$lib_doc");
+            var addFields = new BsonDocument("$addFields", new BsonDocument("library", "$lib_doc._id"));
+            var project = new BsonDocument { { "$project", new BsonDocument { { "_id", 1}, { "name", 1},
+                { "userType", 1}, {"pass", 1}, {"library", 1} } } };
+            var pipeline = new[] { match, lookup, unwind, addFields, project };
+
+            return _users.Aggregate<ExpandoObject>(pipeline).FirstOrDefault();
+        }
+
+
+
+        /// <summary>
+        /// Return the data of a user
+        /// </summary>
         /// <param name="pUserName"></param>
         /// <returns></returns>
-        public User Login(string pUserName)
+        public ExpandoObject Login(string pUserName)
         {
-            var match = Builders<User>.Filter.Eq(CONSTANTS_USER.USER_NAME, pUserName);
-            return _users.Find<User>(match).FirstOrDefault();
+            dynamic user = this.GetByUserName(pUserName);
+            if (user == null) return null;
+
+            if(user.userType != "Manager")
+            {
+                return user;
+            }
+            else
+            {
+                user = this.GetManager(pUserName);
+                return user;
+            }
         }
 
 

@@ -291,6 +291,21 @@ namespace API_LibraryTEC.Services
         }
 
 
+        /// <summary>
+        /// Return the request with the oldest date
+        /// </summary>
+        /// <returns></returns>
+        public Request TakeRequest()
+        {
+            var match = new BsonDocument("$match", new BsonDocument(CONSTANTS_REQUEST.STATE, CONSTANTS_REQUEST.STATES[1]));
+            var sort = new BsonDocument("$sort", new BsonDocument(CONSTANTS_REQUEST.REQUEST_DATE, 1));
+            var limit = new BsonDocument("$limit", 1);
+            var pipeline = new[] { match, sort, limit };
+
+            return _requests.Aggregate<Request>(pipeline).FirstOrDefault();
+        }
+
+
 
     }
 }

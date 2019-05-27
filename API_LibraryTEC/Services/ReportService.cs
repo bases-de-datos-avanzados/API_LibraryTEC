@@ -51,9 +51,10 @@ namespace API_LibraryTEC.Services
             var group = new BsonDocument{{"$group", new BsonDocument{{"_id", "$tema.theme" },
                 { "quantity",new BsonDocument{{"$sum",1}}},
                 { "average", new BsonDocument{{"$avg", "$tema.price"}}}}}};
+            var project = new BsonDocument { { "$project", new BsonDocument { { "_id", 1}, {"quantity", 1},
+                { "average", new BsonDocument{ { "$trunc", "$average"} } } } } };
 
-
-            var pipeline = new[] { unwind, lookup, unwind2, group };
+            var pipeline = new[] { unwind, lookup, unwind2, group, project };
 
             return _requests.Aggregate<ExpandoObject>(pipeline).ToList();
         }

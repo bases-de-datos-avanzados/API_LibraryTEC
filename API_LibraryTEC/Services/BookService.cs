@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Google.Cloud.Translation.V2;
 using System.Threading.Tasks;
 
 namespace API_LibraryTEC.Services
@@ -190,6 +191,20 @@ namespace API_LibraryTEC.Services
             var update = new BsonDocument { { "$inc",
                     new BsonDocument { { CONSTANTS_BOOK.LIBRARIES + "." + CONSTANTS_BOOK.SUB_QUANTITY, -1 } } } };
             _books.FindOneAndUpdate(search, update);
+        }
+
+
+        /// <summary>
+        /// Translate text to the specified language using the Google Translate API
+        /// </summary>
+        /// <param name="pText">Text to translate</param>
+        /// <param name="pLanguage">Language</param>
+        /// <returns></returns>
+        public string Translate(string pText, string pLanguage)
+        {
+            TranslationClient client = TranslationClient.Create();
+            var response = client.TranslateText(pText, pLanguage);
+            return response.TranslatedText;
         }
 
     }

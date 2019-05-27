@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using API_LibraryTEC.Models;
@@ -144,6 +145,24 @@ namespace API_LibraryTEC.Controllers
         public ActionResult<List<Book>> PriceRange([FromRoute] int pLow, [FromRoute] int pHigh)
         {
             return _bookService.PriceRange(pLow, pHigh);
+        }
+
+
+        /// <summary>
+        /// Translate text to the specified language using the Google Translate API
+        /// </summary>
+        /// <param name="pData">Data object with text and language</param>
+        /// <returns></returns>
+        [Route("api/books/translate")]
+        [HttpPost]
+        public ActionResult<ExpandoObject> Translate([FromBody] JObject pData)
+        {
+            string text = pData["text"].ToString();
+            string language = pData["language"].ToString();
+            dynamic response = new ExpandoObject();
+            response.translation = _bookService.Translate(text, language);
+
+            return response;
         }
 
 
